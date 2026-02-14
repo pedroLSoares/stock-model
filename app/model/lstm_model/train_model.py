@@ -7,7 +7,7 @@ import mlflow
 from app.model.ModelTrainer import ModelTrainer
 from app.model.utils import save_trained_model
 
-TICKER = "PETR4.SA"
+TICKER = "AMZN"
 
 def run_training(data: TrainParamsInput):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
