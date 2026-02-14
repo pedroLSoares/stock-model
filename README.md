@@ -1,6 +1,6 @@
 # Stock Prediction API
 
-REST API that predicts the next closing price of a stock using an LSTM neural network. It supports on-demand model retraining in the background and real-time prediction from the last 60 days of OHLCV (Open, High, Low, Volume, Close) data.
+REST API that predicts the next closing price of a stock using an LSTM neural network. It supports on-demand model retraining in the background and real-time prediction from the last X days of OHLCV (Open, High, Low, Volume, Close) data.
 
 ---
 
@@ -17,7 +17,7 @@ REST API that predicts the next closing price of a stock using an LSTM neural ne
 ## How model training works
 
 1. **Data**
-   - Historical OHLCV is loaded for a fixed ticker and period (e.g. 5 years) using **yfinance**.
+   - Historical data is loaded for a fixed ticker and period (e.g. 5 years) using **yfinance**.
    - Only `Open`, `High`, `Low`, `Volume`, `Close` are used; missing rows are dropped.
 
 2. **Train / test split**
