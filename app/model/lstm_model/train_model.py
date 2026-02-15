@@ -9,7 +9,7 @@ from app.model.utils import save_trained_model
 
 TICKER = "AMZN"
 
-def run_training(data: TrainParamsInput):
+def run_training(data: TrainParamsInput, savemodel: bool = True):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     finance_data = load_data(TICKER, "5y")
     X_train, y_train, X_test, y_test, scaler_all, scaler_target = get_train_data(
@@ -35,6 +35,7 @@ def run_training(data: TrainParamsInput):
 
         trainer.evaluate(model, X_test, y_test, scaler_target)
 
-        save_trained_model(model, scaler_all, scaler_target)
+        if(savemodel):
+            save_trained_model(model, scaler_all, scaler_target)
 
         return model, scaler_all, scaler_target

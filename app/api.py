@@ -73,7 +73,7 @@ def home():
 def execute_training(data: TrainParamsInput):
     global is_training, model, scaler_all, scaler_target, model_version
     try:
-        newModel, new_scaler_all, new_scaler_target = train_model.run_training(data=data)
+        newModel, new_scaler_all, new_scaler_target = train_model.run_training(data=data, savemodel=False)
 
         model = newModel
         scaler_all = new_scaler_all
