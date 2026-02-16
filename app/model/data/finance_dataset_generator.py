@@ -24,10 +24,10 @@ def create_sequences(data, seq_length, target_idx):
     return np.array(xs), np.array(ys).reshape(-1, 1)
 
 
-def get_train_data(df, seq_length, train_split, device):
-    train_size = int(len(df) * train_split)
-    train_data_raw = df[:train_size]
-    test_data_raw = df[train_size:]
+def get_train_data(data, seq_length, train_split, device):
+    train_size = int(len(data) * train_split)
+    train_data_raw = data[:train_size]
+    test_data_raw = data[train_size:]
 
 
     scaler_all = MinMaxScaler(feature_range=(0, 1))
