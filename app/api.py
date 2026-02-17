@@ -1,5 +1,6 @@
 import time
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
+from mlflow.tracking import MlflowClient
 import torch
 import uvicorn
 import numpy as np
@@ -106,6 +107,43 @@ def train_endpoint(payload: TrainParamsInput, background_tasks: BackgroundTasks)
         "status": "processing",
         "tip": "You can keep using /predict with the current model until the new one is ready."
     }
+
+@app.get("/model-metrics", summary="Returns the latest model training metrics from MLflow")
+def get_model_metrics():
+    """
+    Return parameters and metrics of the most recent training run from MLflow.
+
+    Looks up the experiment by name (Tech_Challenge_LSTM), fetches the latest
+    run by start_time, and returns its run_id, params, and metrics. If the
+    experiment or run does not exist, returns a status message instead.
+    On error (e.g. MLflow unavailable), returns an error message.
+    """
+    try:
+        client = MlflowClient()
+        
+        experiment = client.get_experiment_by_name("Tech_Challenge_LSTM")
+        
+        if not experiment:
+            return {"status": "No metrics yet. Run training first."}
+
+        runs = client.search_runs(
+            experiment_ids=[experiment.experiment_id],
+            order_by=["start_time DESC"],
+            max_results=1
+        )
+
+        if not runs:
+            return {"status": "No training runs found in MLflow."}
+
+        last_run = runs[0]
+
+        return {
+            "train_id": last_run.info.run_id,
+            "parameters": last_run.data.params,
+            "results": last_run.data.metrics
+        }
+    except Exception as e:
+        return {"error": f"Failed to read MLflow: {str(e)}"}
 
 @app.post("/predict")
 def predict_stock(data: StockInput):

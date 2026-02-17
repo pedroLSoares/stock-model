@@ -16,8 +16,8 @@ def load_data(ticker: str, period: str):
 def create_sequences(data, seq_length, target_idx):
     xs, ys = [], []
     for i in range(len(data) - seq_length):
-        x = data[i:(i + seq_length)]
-        y = data[i + seq_length, target_idx] 
+        x = data[i:(i + seq_length)] # get last seq_length days 
+        y = data[i + seq_length, target_idx] # try to predict next day
         xs.append(x)
         ys.append(y)
     
@@ -25,6 +25,28 @@ def create_sequences(data, seq_length, target_idx):
 
 
 def get_train_data(data, seq_length, train_split, device):
+    """
+    Build train/test inputs and scalers for sequence-based training.
+
+    Receives a 2D array of shape (n_steps, n_features). The last column is
+    treated as the target: each sample is a window of seq_length consecutive
+    rows, and the target is the value of that last column at the next step.
+    Data is split in time (train_split), scaled with MinMaxScaler, and
+    returned as PyTorch tensors on the given device.
+
+    Args:
+        data: Array of shape (n_steps, n_features). The last column is used as target.
+        seq_length: Length of each input sequence (number of steps per sample).
+        train_split: Fraction of rows used for training; the rest is used for test.
+        device: PyTorch device for the output tensors.
+
+    Returns:
+        tuple: (X_train, y_train, X_test, y_test, scaler_all, scaler_target)
+            - X_train, X_test: float tensors (n_samples, seq_length, n_features).
+            - y_train, y_test: float tensors (n_samples, 1), next-step value of the last column.
+            - scaler_all: MinMaxScaler fitted on training data for all features.
+            - scaler_target: MinMaxScaler fitted on the training target column only.
+    """
     train_size = int(len(data) * train_split)
     train_data_raw = data[:train_size]
     test_data_raw = data[train_size:]
