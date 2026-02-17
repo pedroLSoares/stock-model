@@ -7,3 +7,4 @@ class TrainParamsInput(BaseModel):
     learning_rate: float = Field(default=0.005, description="Learning rate (Adam optimizer)")
     num_epochs: int = Field(default=150, description="Number of training epochs")
     train_split: float = Field(default=0.80, description="Fraction of data used for training")
+    period: str = Field(default="5y", description="Period of data search")

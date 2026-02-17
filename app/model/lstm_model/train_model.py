@@ -12,7 +12,7 @@ TICKER = "AMZN"
 def run_training(data: TrainParamsInput, savemodel: bool = True):
     mlflow.set_experiment("Tech_Challenge_LSTM")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    finance_data = load_data(TICKER, "5y")
+    finance_data = load_data(TICKER, data.period)
     X_train, y_train, X_test, y_test, scaler_all, scaler_target = get_train_data(
         finance_data, 
         data.seq_length, 
