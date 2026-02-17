@@ -151,6 +151,12 @@ def predict_stock(data: StockInput):
     Accepts a JSON with the ticker and a list of 60 historical prices.
     Returns the predicted next price.
     """
+
+    if model is None or scaler_all is None or scaler_target is None:
+        raise HTTPException(
+            status_code=503, 
+            detail="Model is not loaded. Please wait for the background training to finish or execute model training."
+        )
     
     if len(data.features[0]) != 5:
          raise HTTPException(

@@ -14,6 +14,14 @@ REST API that predicts the next closing price of a stock using an LSTM neural ne
 
 ---
 
+## Architecture & Design Decisions
+
+- **Data Leakage Prevention:** We explicitly use two separate `MinMaxScaler` instances. `scaler_all` fits the input features, while `scaler_target` fits *only* the Close price of the training set. The scaling is applied *after* the train/test split to guarantee the model remains entirely blind to future data distributions.
+- **Sliding Window Approach:** The model doesn't just look at isolated days; it learns the sequence of the market using a 60-day rolling window (`seq_length`), inherently capturing temporal dependencies and market momentum.
+- **Asynchronous MLOps:** Training is decoupled from inference using FastAPI's `BackgroundTasks`. The API remains responsive to `/predict` calls using the current weights while a new model is trained and dynamically swapped in memory (Hot-Swap) upon completion.
+
+---
+
 ## How model training works
 
 1. **Data**
@@ -74,6 +82,7 @@ If the model or scalers are not loaded (e.g. missing artifacts), prediction requ
 |--------|------------------|-------------|
 | GET    | `/`              | Health message. |
 | GET    | `/system-health` | CPU and RAM usage; indicates if a training run is active. |
+| GET    | `/model-metrics` | Returns the latest training run from MLflow (run_id, parameters, metrics). |
 | POST   | `/train`         | Starts LSTM training in the background (body: training hyperparameters). Only one training run at a time. |
 | POST   | `/predict`       | Sends 60 days of OHLCV; returns predicted next close, trend, and model version. |
 | GET    | `/metrics`       | Prometheus metrics (if instrumentator is enabled). |
