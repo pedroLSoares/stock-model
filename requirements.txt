@@ -61,7 +61,7 @@ mpmath
 multitasking
 nest-asyncio
 networkx
-numpy=1.26.4
+numpy==1.26.4
 opentelemetry-api
 opentelemetry-proto
 opentelemetry-sdk
