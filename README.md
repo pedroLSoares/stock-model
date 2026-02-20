@@ -111,22 +111,13 @@ Ensure `app/model_artifacts/` (or the path used in code) contains the trained mo
 From the **project root** (where `app/`, `container/` are):
 
 ```bash
-docker build -f container/Dockerfile -t stock-api .
+docker build -t stock-model .
 ```
 
 ### Run
 
-**With artifacts mounted at runtime (recommended):**
-
 ```bash
-docker run -p 8000:8000 -v $(pwd)/model_artifacts:/app/model_artifacts stock-api
-```
-
-**With artifacts already in the image:**  
-Add `COPY model_artifacts ./model_artifacts` (or the correct path) in the Dockerfile and build; then:
-
-```bash
-docker run -p 8000:8000 stock-api
+docker run -p 8000:8000 -v ${PWD}/app/model_artifacts:/app/app/model_artifacts stock-model
 ```
 
 API: `http://localhost:8000`. Docs: `http://localhost:8000/docs`.
